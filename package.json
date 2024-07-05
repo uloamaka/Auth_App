@@ -1,0 +1,27 @@
+{
+    "name": "auth_app",
+    "version": "1.0.0",
+    "description": "built with Node.js",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "generate": "drizzle-kit generate",
+        "migrate": "node ./db/migrator"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^5.1.1",
+        "dotenv": "^16.4.5",
+        "drizzle-orm": "^0.31.2",
+        "express": "^4.19.2",
+        "express-rate-limit": "^7.3.1",
+        "http-status-codes": "^2.3.0",
+        "jsonwebtoken": "^9.0.2",
+        "postgres": "^3.4.4"
+    },
+    "devDependencies": {
+        "drizzle-kit": "^0.22.8"
+    }
+}
