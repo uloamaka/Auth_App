@@ -1,5 +1,5 @@
 const { drizzle } = require('drizzle-orm/postgres-js');
-const schema = require('./schema/index');
+const schema = require('./schema/userOrganisation');
 const postgres = require('postgres');
 const { dbURL } = require('../utils/config');
 

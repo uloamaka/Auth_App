@@ -1,9 +1,8 @@
 const bcrypt = require('bcrypt');
 const jwt = require('../../services/jwt');
-const User = require('./path/to/user/model');
 
 class Service {
-    async getOrg(payload) {
+    async getOrg() {
         try {
             //check DB for authenticated user organisation
             //If user organisation details not found throw error "No organisation found!"

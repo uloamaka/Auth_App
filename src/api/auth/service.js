@@ -1,77 +1,136 @@
 const bcrypt = require('bcrypt');
+const {
+    users,
+    organisations,
+    usersToOrgs,
+} = require('../../db/schema/userOrganisation');
 const jwt = require('../../services/jwt');
-const User = require('./path/to/user/model');
+const { v4: uuidv4 } = require('uuid');
+const { db } = require('../../db');
+const { StatusCodes } = require('http-status-codes');
+const { Console } = require('console');
+const { eq } = require('drizzle-orm');
 
 class Service {
     async register(payload) {
         try {
-            const { firstName, lastName, email, passord, phone } = payload;
-            //check DB for user
-            //If user details found throw error "Registration unsuccessful"
-            //If not found start process to register as new user
-            //Hash password
-            //asign jwt
-            //set the data payload
-            // res.status === 201 "created"
+            const { firstName, lastName, email, password, phone } = payload;
+            const user = await db
+                .select()
+                .from(users)
+                .where(eq(users.email, email))
+                .execute()
+                .then((result) => result[0]);
+            if (user) {
+                const error = new Error('Registration unsuccessful');
+                error.status = 'Bad request';
+                error.statusCode = StatusCodes.BAD_REQUEST;
+                throw error;
+            }
+            let data;
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const { access_token } = await jwt.generateToken(email);
+            await db.transaction(async (tx) => {
+                const userId = uuidv4();
+                const user = await db
+                    .insert(users)
+                    .values({
+                        userId,
+                        firstName,
+                        lastName,
+                        email,
+                        password: hashedPassword,
+                        phone,
+                        accessToken: access_token,
+                    })
+                    .returning()
+                    .execute()
+                    .then((result) => result[0]);
+                const orgId = uuidv4();
+                await db.insert(organisations).values({
+                    orgId,
+                    name: `${firstName}'s Organisation`,
+                    description: '',
+                });
+                await db
+                    .insert(usersToOrgs)
+                    .values({ userId: userId, orgId: orgId });
 
-            // "data": {
-            //    "accessToken": "eyJh...",
-            //    "user": {
-            //           "userId": "string",
-            //           "firstName": "string",
-            //     			"lastName": "string",
-            //     			"email": "string",
-            //     			"phone": "string",
-            //       }
-            // }
+                data = {
+                    accessToken: access_token,
+                    user: {
+                        userId: user.userId,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        email: user.email,
+                        phone: user.phone,
+                    },
+                };
+            });
             return {
                 status: 'success',
                 message: 'Registration successful',
                 data,
             };
-            //             {
-            //     "status": "Bad request",
-            //     "message": "Registration unsuccessful",
-            //     "statusCode": 400
-            // }
         } catch (error) {
+            if (!error.statusCode) {
+                const serverError = new Error('Registration unsuccessful');
+                serverError.status = 'Bad request';
+                serverError.statusCode = StatusCodes.BAD_REQUEST;
+                throw serverError;
+            }
             throw error;
         }
     }
     async login(payload) {
         try {
             const { email, password } = payload;
-            //Check DB if user exists
-            //If no user detail found throw an error "Authentication failed"
-            //If found compare provided password with user actual password
-            //If password is wrong Throw an error "Authentication failed"
-            //If password is valid
-            //Assign token
-            //set the data payload
+            const user = await db
+                .select()
+                .from(users)
+                .where(eq(users.email, email))
+                .execute()
+                .then((result) => result[0]);
 
-            //     "data": {
-            //       "accessToken": "eyJh...",
-            //       "user": {
-            // 	      "userId": "string",
-            // 	      "firstName": "string",
-            // 				"lastName": "string",
-            // 				"email": "string",
-            // 				"phone": "string",
-            //       }
-            //     }
-            // }
+            if (!user) {
+                const error = new Error('Wrong Login details');
+                error.status = 'Bad request';
+                error.statusCode = StatusCodes.UNAUTHORIZED;
+                throw error;
+            }
+            const is_valid = await bcrypt.compare(password, user.password);
+            if (!is_valid) {
+                const error = new Error('Authentication failed');
+                error.status = 'Bad request';
+                error.statusCode = StatusCodes.BAD_REQUEST;
+                throw error;
+            }
+
+            const { access_token } = await jwt.generateToken(email);
+
+            const data = {
+                accessToken: access_token,
+                user: {
+                    userId: user.userId,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
+                    phone: user.phone,
+                },
+            };
 
             return {
                 status: 'success',
                 message: 'Login successful',
                 data,
             };
-            //             {
-            //     "status": "Bad request",
-            //     "message": "Authentication failed",
-            //     "statusCode": 401
-            // }
         } catch (error) {
+            if (!error.statusCode) {
+                const serverError = new Error('Authentication failed');
+                serverError.status = 'Bad request';
+                serverError.statusCode = StatusCodes.UNAUTHORIZED;
+                throw serverError;
+            }
             throw error;
         }
     }

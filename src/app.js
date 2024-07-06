@@ -1,5 +1,6 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
+const bodyParser = require('body-parser');
 const router = require('./api')
 const { PORT } = require('./utils/config');
 const app = express()
@@ -16,6 +17,8 @@ const limiter = rateLimit({
     },
 });
 
+
+app.use(bodyParser.json());
 const VERSION_1 = '/';
 app.use(VERSION_1, limiter);
 router(app, VERSION_1);

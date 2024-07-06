@@ -1,6 +1,5 @@
 const bcrypt = require('bcrypt');
 const jwt = require('../../services/jwt');
-const User = require('./path/to/user/model');
 
 class Service {
     async getUser(payload) {

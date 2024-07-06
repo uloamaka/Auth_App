@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const Controller= require('./controller')
 
-const route = Router();
 const Ctrl = new Controller();
 
-route.get('/api/users/:id', Ctrl.getUser.bind(Ctrl)); 
+router.get('/api/users/:id', Ctrl.getUser.bind(Ctrl)); 
 
 module.exports = router;
 

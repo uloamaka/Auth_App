@@ -8,7 +8,7 @@ const db = drizzle(migrationClient);
 // IIFE to run migrations
 (async () => {
     try {
-        await migrate(db, { migrationsFolder: './migrations' });
+        await migrate(db, { migrationsFolder: './drizzle' });
     } catch (error) {
         console.log(error);
     }

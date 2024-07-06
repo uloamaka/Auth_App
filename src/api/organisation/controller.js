@@ -11,47 +11,77 @@ class Controller extends BaseController {
     async getOrg(req, res, next) {
         try {
             this.validateRequest(req);
+            let userEmail = req.user
+            const { status, message, data } = await this.service.getOrg(
+                userEmail
+            );
 
-            const { message, data } = await this.service.getOrg(req.body);
-
-            this.responseHandler(res, StatusCodes.CREATED, message, data);
+            this.responseHandler(res, status, StatusCodes.CREATED, message, data);
         } catch (error) {
-            next(error);
+               res.status(
+                   error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR
+               ).json({
+                   status: error.status || 'Internal Server Error',
+                   message: error.message || 'Something went wrong',
+                   statusCode:
+                       error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
+               });
         }
     }
     async getOrgById(req, res, next) {
         try {
             this.validateRequest(req);
+            let userEmail = req.user;
+            const {status, message, data } = await this.service.getOrgById(userEmail);
 
-            const { message, data } = await this.service.getOrgById(req.body);
-
-            this.responseHandler(res, StatusCodes.OK, message, data);
+            this.responseHandler(res,status, StatusCodes.OK, message, data);
         } catch (error) {
-            next(error);
+               res.status(
+                   error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR
+               ).json({
+                   status: error.status || 'Internal Server Error',
+                   message: error.message || 'Something went wrong',
+                   statusCode:
+                       error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
+               });
         }
     }
     async createOrg(req, res, next) {
         try {
             this.validateRequest(req);
+            let userEmail = req.user;
+            const {status, message, data } = await this.service.createOrg(userEmail);
 
-            const { message, data } = await this.service.createOrg(req.body);
-
-            this.responseHandler(res, StatusCodes.OK, message, data);
+            this.responseHandler(res,status, StatusCodes.OK, message, data);
         } catch (error) {
-            next(error);
+               res.status(
+                   error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR
+               ).json({
+                   status: error.status || 'Internal Server Error',
+                   message: error.message || 'Something went wrong',
+                   statusCode:
+                       error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
+               });
         }
     }
     async addOrgUserById(req, res, next) {
         try {
             this.validateRequest(req);
-
-            const { message, data } = await this.service.addOrgUserById(
-                req.body
+            let userEmail = req.user;
+            const {status, message, data } = await this.service.addOrgUserById(
+                userEmail
             );
 
-            this.responseHandler(res, StatusCodes.OK, message, data);
+            this.responseHandler(res, status, StatusCodes.OK, message, data);
         } catch (error) {
-            next(error);
+               res.status(
+                   error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR
+               ).json({
+                   status: error.status || 'Internal Server Error',
+                   message: error.message || 'Something went wrong',
+                   statusCode:
+                       error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
+               });
         }
     }
 }

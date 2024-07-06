@@ -18,10 +18,9 @@ class BaseController {
         }
     }
 
-    responseHandler(res, status, message, data = null) {
-        res.status(status).json({
+    responseHandler(res, status, statusCode, message, data = null) {
+        res.status(statusCode).json({
             status: status,
-            error: /^4/.test(status.toString()) ? true : false,
             message: message,
             data,
         });

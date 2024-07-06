@@ -1,7 +1,11 @@
 const authRoutes = require('./auth/routes');
+const userRoutes = require('./user/routes');
+const orgRoutes = require('./organisation/routes')
 
 function router(app, version) {
     app.use(version, authRoutes);
+    app.use(version, userRoutes);
+    app.use(version, orgRoutes);
 
     app.get('/health', (_req, res) => {
         const healthcheck = {
