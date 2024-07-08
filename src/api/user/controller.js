@@ -10,16 +10,24 @@ class Controller extends BaseController {
 
     async getUser(req, res, next) {
         try {
-            this.validateRequest(req);
+            let userId = req.params.id;
+            const { status, message, data } = await this.service.getUser(
+                userId
+            );
 
-            const { status, message, data } = await this.service.register(req.body);
-
-            this.responseHandler(res, status, message, data);
+            this.responseHandler(res, status, StatusCodes.OK, message, data);
         } catch (error) {
-            next(error);
+            console.log(error)
+            res.status(
+                error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR
+            ).json({
+                status: error.status || 'Internal Server Error',
+                message: error.message || 'Something went wrong',
+                statusCode:
+                    error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
+            });
         }
     }
-
 }
 
 module.exports = Controller;

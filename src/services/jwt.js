@@ -5,14 +5,14 @@ class JWTService {
     async generateToken(email) {
         const access_token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET, {
             algorithm: 'HS256',
-            expiresIn: '10m',
+            expiresIn: '20m',
             audience: 'API',
             issuer: 'SMS',
         });
 
         return {
             access_token,
-            expires_at: dayjs().add(10, 'minutes').unix(),
+            expires_at: dayjs().add(20, 'minutes').unix(),
         };
     }
 

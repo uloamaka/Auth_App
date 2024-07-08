@@ -8,23 +8,22 @@ const jwt = require('../../services/jwt');
 const { v4: uuidv4 } = require('uuid');
 const { db } = require('../../db');
 const { StatusCodes } = require('http-status-codes');
-const { Console } = require('console');
 const { eq } = require('drizzle-orm');
 
 class Service {
     async register(payload) {
         try {
             const { firstName, lastName, email, password, phone } = payload;
-            const user = await db
+            const userExists = await db
                 .select()
                 .from(users)
                 .where(eq(users.email, email))
                 .execute()
                 .then((result) => result[0]);
-            if (user) {
+            if (userExists) {
                 const error = new Error('Registration unsuccessful');
                 error.status = 'Bad request';
-                error.statusCode = StatusCodes.BAD_REQUEST;
+                error.statusCode = StatusCodes.UNPROCESSABLE_ENTITY;
                 throw error;
             }
             let data;
@@ -32,7 +31,7 @@ class Service {
             const { access_token } = await jwt.generateToken(email);
             await db.transaction(async (tx) => {
                 const userId = uuidv4();
-                const user = await db
+                const user = await tx
                     .insert(users)
                     .values({
                         userId,
@@ -47,12 +46,12 @@ class Service {
                     .execute()
                     .then((result) => result[0]);
                 const orgId = uuidv4();
-                await db.insert(organisations).values({
+                await tx.insert(organisations).values({
                     orgId,
                     name: `${firstName}'s Organisation`,
                     description: '',
                 });
-                await db
+                await tx
                     .insert(usersToOrgs)
                     .values({ userId: userId, orgId: orgId });
 
@@ -93,7 +92,7 @@ class Service {
                 .then((result) => result[0]);
 
             if (!user) {
-                const error = new Error('Wrong Login details');
+                const error = new Error('Authentication failed');
                 error.status = 'Bad request';
                 error.statusCode = StatusCodes.UNAUTHORIZED;
                 throw error;
@@ -102,7 +101,7 @@ class Service {
             if (!is_valid) {
                 const error = new Error('Authentication failed');
                 error.status = 'Bad request';
-                error.statusCode = StatusCodes.BAD_REQUEST;
+                error.statusCode = StatusCodes.UNAUTHORIZED;
                 throw error;
             }
 

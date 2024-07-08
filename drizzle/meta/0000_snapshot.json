@@ -1,5 +1,5 @@
 {
-  "id": "e736735a-8aa8-4b60-873e-ce48647f9912",
+  "id": "d4f46483-031f-45ec-ac92-585e95ccfad8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -158,28 +158,28 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "users_to_orgs_user_id_users_id_fk": {
-          "name": "users_to_orgs_user_id_users_id_fk",
+        "users_to_orgs_user_id_users_user_id_fk": {
+          "name": "users_to_orgs_user_id_users_user_id_fk",
           "tableFrom": "users_to_orgs",
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
           "columnsTo": [
-            "id"
+            "user_id"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "users_to_orgs_org_id_organisations_id_fk": {
-          "name": "users_to_orgs_org_id_organisations_id_fk",
+        "users_to_orgs_org_id_organisations_org_id_fk": {
+          "name": "users_to_orgs_org_id_organisations_org_id_fk",
           "tableFrom": "users_to_orgs",
           "tableTo": "organisations",
           "columnsFrom": [
             "org_id"
           ],
           "columnsTo": [
-            "id"
+            "org_id"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"

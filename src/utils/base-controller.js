@@ -1,20 +1,28 @@
 const { validationResult } = require('express-validator');
 const { CustomError } = require('./service-error.js');
+const { StatusCodes } = require('http-status-codes');
 
 class BaseController {
     validateRequest(req) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             let message = errors.array()[0].msg;
-            throw new CustomError(message, errors.array(), 422);
+            throw new CustomError(
+                message,
+                errors.array(),
+                StatusCodes.UNPROCESSABLE_ENTITY
+            );
         }
     }
 
-    static validateRequest(req) {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            let message = errors.array()[0].msg;
-            throw new CustomError(message, errors.array(), 422);
+    static validateRequest(req, schema) {
+        const validationResult = schema.safeParse(req.body);
+        if (!validationResult.success) {
+            throw new CustomError(
+                'Validation error',
+                validationResult.error,
+                StatusCodes.UNPROCESSABLE_ENTITY
+            );
         }
     }
 
@@ -29,7 +37,6 @@ class BaseController {
     static responseHandler(res, status, message, data = null) {
         res.status(status).json({
             status: status,
-            error: /^4/.test(status.toString()) ? true : false,
             message: message,
             data,
         });

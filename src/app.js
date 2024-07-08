@@ -3,7 +3,9 @@ const rateLimit = require('express-rate-limit');
 const bodyParser = require('body-parser');
 const router = require('./api')
 const { PORT } = require('./utils/config');
+const { Module } = require('module');
 const app = express()
+// const session = require('express-session')
 
 app.set('trust proxy', 1);
 
@@ -17,6 +19,17 @@ const limiter = rateLimit({
     },
 });
 
+// var sess = {
+//     secret: 'keyboard cat',
+//     cookie: {},
+// };
+
+// if (app.get('env') === 'production') {
+//     app.set('trust proxy', 1); // trust first proxy
+//     sess.cookie.secure = true; // serve secure cookies
+// }
+
+// app.use(session(sess));
 
 app.use(bodyParser.json());
 const VERSION_1 = '/';
@@ -24,6 +37,10 @@ app.use(VERSION_1, limiter);
 router(app, VERSION_1);
 app.disable('x-powered-by');
 
-app.listen(PORT, async () => {
-    console.log(`Server running on ${PORT}, Crtl-C to terminate`, {});
-});
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(PORT, async () => {
+        console.log(`Server running on ${PORT}, Crtl-C to terminate`, {});
+    })
+}
+
+module.exports = app

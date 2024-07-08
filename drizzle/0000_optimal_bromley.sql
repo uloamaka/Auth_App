@@ -29,13 +29,13 @@ CREATE TABLE IF NOT EXISTS "users_to_orgs" (
 );
 
 DO $$ BEGIN
- ALTER TABLE "users_to_orgs" ADD CONSTRAINT "users_to_orgs_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "users_to_orgs" ADD CONSTRAINT "users_to_orgs_user_id_users_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("user_id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 
 DO $$ BEGIN
- ALTER TABLE "users_to_orgs" ADD CONSTRAINT "users_to_orgs_org_id_organisations_id_fk" FOREIGN KEY ("org_id") REFERENCES "public"."organisations"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "users_to_orgs" ADD CONSTRAINT "users_to_orgs_org_id_organisations_org_id_fk" FOREIGN KEY ("org_id") REFERENCES "public"."organisations"("org_id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

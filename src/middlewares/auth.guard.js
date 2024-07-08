@@ -4,8 +4,6 @@ const BaseController = require('../utils/base-controller');
 
 async function auth(req, res, next) {
     try {
-        BaseController.validateRequest(req);
-
         const auth_header = req.headers.authorization;
         if (!auth_header || !auth_header.startsWith('Bearer')) {
             throw new Error('Authentication invalid');

@@ -1,10 +1,11 @@
 class CustomError extends Error {
-  constructor(message, errors, status) {
-    super(message);
-    this.name = 'CustomError';
-    this.errors = errors;
-    this.status = status;
-  }
+    constructor(message, details, statusCode) {
+        super(message);
+        this.details = details;
+        this.statusCode = statusCode;
+        this.status = 'Bad request';
+    }
 }
 
-module.exports = CustomError;
+module.exports = { CustomError };
+

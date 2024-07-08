@@ -1,36 +1,34 @@
-const bcrypt = require('bcrypt');
-const jwt = require('../../services/jwt');
-
+const { StatusCodes } = require('http-status-codes');
+const {getUserByEmail, getUserById} = require('../../db/model')
 class Service {
-    async getUser(payload) {
+    async getUser(  userId ) {
         try {
-            //const {id} = payload;
-            //check DB for user
-            //If user details not found throw error "Registration unsuccessful"
-            //If found return
-            //          {
-            // 		"status": "success",
-            //     "message": "<message>",
-            //     "data": {
-            //       "userId": "string",
-            //       "firstName": "string",
-            // 			"lastName": "string",
-            // 			"email": "string",
-            // 			"phone": "string"
-            //     }
-            // }
+
+            const userDetails = await getUserById(userId);
+
+            if (!userDetails) {
+                throw new Error('User not found!');
+            }
+            let data = {
+                userId: userDetails.userId,
+                firstName: userDetails.firstName,
+                lastName: userDetails.lastName,
+                email: userDetails.email,
+                phone: userDetails.phone,
+            };
 
             return {
                 status: 'success',
-                message: '<message>',
+                message: 'User details fechted successfully',
                 data,
             };
-            //             {
-            //     "status": "Bad request",
-            //     "message": "User not found!",
-            //     "statusCode": 400
-            // }
         } catch (error) {
+            if (!error.statusCode) {
+                const serverError = error;
+                serverError.status = 'Bad request';
+                serverError.statusCode = StatusCodes.BAD_REQUEST;
+                throw serverError;
+            }
             throw error;
         }
     }

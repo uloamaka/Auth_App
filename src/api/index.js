@@ -1,6 +1,6 @@
 const authRoutes = require('./auth/routes');
 const userRoutes = require('./user/routes');
-const orgRoutes = require('./organisation/routes')
+const orgRoutes = require('./organisation/routes');
 
 function router(app, version) {
     app.use(version, authRoutes);
@@ -18,7 +18,12 @@ function router(app, version) {
         res.send(healthcheck);
     });
 
+    app.use((req, res) => {
+        res.status(404).json({error: 'Resource not found'});
+    });
+
     app.use((err, req, res, next) => {
+        console.log(err);
         res.status(err.status || 500);
         res.json({
             error: {

@@ -44,10 +44,10 @@ const usersToOrgs = pgTable(
     {
         userId: varchar('user_id')
             .notNull()
-            .references(() => users.id),
+            .references(() => users.userId),
         orgId: varchar('org_id')
             .notNull()
-            .references(() => organisations.id),
+            .references(() => organisations.orgId),
     },
     (t) => ({
         pk: primaryKey({ columns: [t.userId, t.orgId] }),
