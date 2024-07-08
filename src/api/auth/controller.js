@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const Service = require('./Service.js');
+const Service = require('./service.js');
 const BaseController = require('../../utils/base-controller');
 const { z, ZodError } = require('zod');
 
