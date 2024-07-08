@@ -1,9 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const bodyParser = require('body-parser');
-const router = require('./api')
-const { PORT } = require('./utils/config');
-const app = express()
+const router = require('./api');
+const app = express();
 
 app.set('trust proxy', 1);
 
@@ -17,7 +17,6 @@ const limiter = rateLimit({
     },
 });
 
-
 app.use(bodyParser.json());
 const VERSION_1 = '/';
 app.use(VERSION_1, limiter);
@@ -25,9 +24,12 @@ router(app, VERSION_1);
 app.disable('x-powered-by');
 
 if (process.env.NODE_ENV !== 'test') {
-    app.listen(PORT, async () => {
-        console.log(`Server running on ${PORT}, Crtl-C to terminate`, {});
-    })
+    app.listen(process.env.PORT, async () => {
+        console.log(
+            `Server running on ${process.env.PORT}, Crtl-C to terminate`,
+            {}
+        );
+    });
 }
 
-module.exports = app
+module.exports = app;
